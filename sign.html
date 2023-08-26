@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signature Capture and Crop</title>
+</head>
+<body>
+    <canvas id="signatureCanvas" width="400" height="200" style="border: 1px solid black;"></canvas><br>
+    <button id="captureButton">Capture Signature</button>
+    <button id="cropButton">Crop Signature</button><br>
+    <canvas id="croppedCanvas" width="200" height="100" style="border: 1px solid black;"></canvas><br>
+    <img id="croppedImage" src="" alt="Cropped Signature" style="display: none;">
+    <script>
+const signatureCanvas = document.getElementById('signatureCanvas');
+const captureButton = document.getElementById('captureButton');
+const cropButton = document.getElementById('cropButton');
+const croppedCanvas = document.getElementById('croppedCanvas');
+const croppedImage = document.getElementById('croppedImage');
+
+const signatureCtx = signatureCanvas.getContext('2d');
+const croppedCtx = croppedCanvas.getContext('2d');
+
+let isDrawing = false;
+let startX = 0;
+let startY = 0;
+
+signatureCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    startX = e.clientX - signatureCanvas.getBoundingClientRect().left;
+    startY = e.clientY - signatureCanvas.getBoundingClientRect().top;
+    signatureCtx.beginPath();
+    signatureCtx.moveTo(startX, startY);
+});
+
+signatureCanvas.addEventListener('mousemove', (e) => {
+    if (isDrawing) {
+        const x = e.clientX - signatureCanvas.getBoundingClientRect().left;
+        const y = e.clientY - signatureCanvas.getBoundingClientRect().top;
+        signatureCtx.lineTo(x, y);
+        signatureCtx.stroke();
+    }
+});
+
+signatureCanvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+});
+
+captureButton.addEventListener('click', () => {
+    croppedCanvas.width = signatureCanvas.width;
+    croppedCanvas.height = signatureCanvas.height;
+    croppedCtx.drawImage(signatureCanvas, 0, 0);
+    croppedImage.src = croppedCanvas.toDataURL();
+    croppedImage.style.display = 'inline';
+});
+
+cropButton.addEventListener('click', () => {
+    // Additional processing can be done here, e.g., sending the cropped image to the server.
+    alert('Cropped signature is ready to be processed.');
+});
+
+    </script>
+    
+    
+</body>
+</html>
